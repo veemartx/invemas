@@ -162,6 +162,13 @@ function product_extra_details($con,$slug){
         $res->sold_as=$p['sold_as'];
 
         $res->description=$p['description'];
+    }else{
+
+        $res->pack_size=0;
+
+        $res->sold_as="";
+
+        $res->description="";
     }
 
     return $res;

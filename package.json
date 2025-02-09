@@ -43,6 +43,7 @@
 		"notiflix": "^3.2.8",
 		"pdfmake": "^0.2.18",
 		"qrcode": "^1.5.4",
+		"quill": "^2.0.3",
 		"svelte-apexcharts": "^1.0.2",
 		"svelte-ux": "^0.90.0",
 		"uuid": "^11.0.5"

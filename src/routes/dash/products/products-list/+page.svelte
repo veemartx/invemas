@@ -3,22 +3,63 @@
 	import TitleBar from '$components/title-bar.svelte';
 	import { API_BASE_URL } from '$lib/config/base-urls';
 	import { fetch_resource } from '$lib/methods/functions';
+	import { add_commas, current_liu } from '$lib/methods/methods';
 	import { onMount } from 'svelte';
+	import pkg from 'notiflix';
+	import axios from 'axios';
 
-	import { Button } from 'svelte-ux';
+	const { Notify, Confirm } = pkg;
 
 	const url = `${API_BASE_URL}products/list.php`;
 
 	const resource = 'list';
 
+	const liu = current_liu();
+
 	let list;
 
-	onMount(async () => {
+	const delete_list_product = async (pl) => {
+		console.log(pl);
+
+		let dt = {
+			pl_id: pl.pl_id,
+			name: pl.name,
+			init: liu.name
+		};
+
+		try {
+			let response = await axios({
+				method: 'POST',
+				data: dt,
+				url: `${API_BASE_URL}product-list/delete.php`,
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				}
+			});
+
+			let res = response.data;
+
+			if (res.success) {
+				Notify.success(res.message);
+
+				await get_list();
+			} else {
+				Notify.failure(res.message);
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+	const get_list = async () => {
 		const res = await fetch_resource(resource, url);
 
 		list = res.data;
+	};
 
-		// console.log(list);
+	onMount(async () => {
+		//get ist
+		await get_list();
 	});
 </script>
 
@@ -48,6 +89,7 @@
 							<th>No</th>
 							<th>Name</th>
 							<th>Code</th>
+							<th>Category</th>
 							<th>Cost Price</th>
 							<th>Retail Price</th>
 							<th>Discount</th>
@@ -55,27 +97,47 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each list as user, i}
+						{#each list as lp, i}
 							<tr class="text-sm text-slate-700">
 								<td>{i + 1}</td>
-								<td>{user.name}</td>
-								<td>{user.code}</td>
-								<td>{user.cost_price}</td>
-								<td>{user.retail_price}</td>
-								<td>{user.discount}</td>
+								<td>{lp.name}</td>
+								<td>{lp.code}</td>
+								<td>{lp.category}</td>
+								<td>{add_commas(parseFloat(lp.cost_price), 2)}</td>
+								<td>{add_commas(parseFloat(lp.retail_price), 2)}</td>
+								<td>{lp.discount}</td>
 								<td>
 									<!-- svelte-ignore a11y_consider_explicit_label -->
-									<button class="ui mini red basic icon button">
+									<button
+										on:click={() => {
+											Confirm.show(
+												'Delete',
+												`Delete List Item ${lp.name}?`,
+												'Yes',
+												'Cancel',
+												() => {
+													delete_list_product(lp);
+												}
+											);
+										}}
+										class="ui mini red basic icon button"
+									>
 										<i class="ui red trash icon"></i>
 									</button>
+
 									<!-- svelte-ignore a11y_consider_explicit_label -->
-									<button class="ui mini orange basic icon button">
-										<i class="ui edit icon"></i>
-									</button>
+									<a href="products-list/edit/{lp.slug}">
+										<button class="ui mini orange basic icon button">
+											<i class="ui edit icon"></i>
+										</button>
+									</a>
+
 									<!-- svelte-ignore a11y_consider_explicit_label -->
-									<button class="ui mini green basic icon button">
-										<i class="ui eye icon"></i>
-									</button>
+									<a href="products-list/{lp.slug}">
+										<button class="ui mini green basic icon button">
+											<i class="ui eye icon"></i>
+										</button>
+									</a>
 								</td>
 							</tr>
 						{/each}

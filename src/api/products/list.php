@@ -11,7 +11,7 @@ $res=new stdClass();
 
 $list=[];
 
-$sql="SELECT * FROM products_list";
+$sql="SELECT * FROM products_list WHERE deleted_at IS NULL";
 
 $query=mysqli_query($con,$sql);
 
@@ -21,9 +21,13 @@ while ($p=mysqli_fetch_assoc($query)){
 
     $pl->id=$p['id'];
 
+    $pl->pl_id=$p['pl_id'];
+
     $pl->name=$p['name'];
 
     $pl->code=$p['code'];
+
+    $pl->category=$p['category'];
 
     $pl->cost_price=$p['cost_price'];
 
