@@ -40,6 +40,10 @@
 	let slug;
 	let images_url;
 
+	const reset_form=(id)=>{
+		document.getElementById(id).reset();
+	}
+
 	const add_product = async () => {
 		let dt = {
 			product_id: v4(),
@@ -85,12 +89,13 @@
 
 				Notify.success(res.message);
 
-				goto('/dash/products');
+				reset_form('create-product-form');
+				
 
 			}else{
 				Notify.failure(res.message);
 
-				window.location.reload();
+				// window.location.reload();
 			}
 
 			adding_product=false;
@@ -139,7 +144,7 @@
 	<div class="my-3">
 		<Segment>
 			<div class="" slot="content">
-				<form on:submit|preventDefault={add_product} class="text-slate-900">
+				<form on:submit|preventDefault={add_product} id="create-product-form" class="text-slate-900">
 					<div class="flex flex-col justify-between md:flex-row">
 						<div class="p-2">
 							<label for="name">Name</label> <br />
