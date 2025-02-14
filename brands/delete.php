@@ -8,32 +8,20 @@
 
     $res=new stdClass();
 
-    $pl_id=$_POST['pl_id'];
+    $brand_id=$_POST['brand_id'];
 
     $name=$_POST['name'];
-
-    $init=$_POST['init'];
-
-    $transaction_payload=new stdClass();
-
-    $transaction_payload->product_id=$pl_id;
-
-    $transaction_payload->name=$name;
-
 
     // c
     $now=date('Y-m-d h:i:s',time());
 
-    $sql="UPDATE products_list SET deleted_at='$now',deleted_by='$init' WHERE pl_id='$pl_id'";
+    $sql="UPDATE brands SET deleted_at='$now' WHERE brand_id='$brand_id'";
 
     if(mysqli_query($con,$sql)){
 
         $res->success=true;
 
         $res->message=$name." Deleted Successfully";
-
-        // create transaction 
-        createTransaction($con,"Products List","List product deletion","products_list",$pl_id,json_encode($transaction_payload),$init);
     }else{
         $res->success=false;
 
