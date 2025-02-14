@@ -68,6 +68,8 @@
 
 	let subcategories = [];
 
+	let filtered_subcategories=[];
+
 	let brands = [];
 
 	let manufacturers = [];
@@ -166,6 +168,18 @@
 		}
 	};
 
+	const filter_subcategories=(category)=>{
+		const filtered=subcategories.filter((sc)=>{
+			if(sc.category==category){
+				return sc;
+			}
+		})
+
+		console.log(filtered);
+		subcategory="";
+		filtered_subcategories=filtered;
+	}
+
 	onMount(async () => {
 		//init quill
 		const { default: Quill } = await import('quill');
@@ -187,6 +201,9 @@
 
 		let brand_res = await fetch_resource('brands', `${API_BASE_URL}products/brands.php`);
 
+		let scat_res = await fetch_resource('subcategories', `${API_BASE_URL}products/subcategories.php`);
+
+
 		let manufacturer_res = await fetch_resource(
 			'manufacturers',
 			`${API_BASE_URL}products/manufacturers.php`
@@ -198,7 +215,10 @@
 
 		manufacturers = manufacturer_res.data;
 
-		// console.log(cat_res.data);
+		subcategories=scat_res.data;
+
+
+		// console.log(scat_res.data);
 	});
 </script>
 
@@ -394,13 +414,33 @@ md:flex-row"
 										<div class="flex-auto">
 											<label for="name">Category</label> <br />
 
-											<select name="category" id="category" bind:value={category} required>
+											<select name="category" id="category" bind:value={category} onchange={(e)=>{
+
+												if(e.target.value){
+													filter_subcategories(e.target.value);
+												}else{
+													subcategory="";
+												}
+											}} required>
 												<option value="">Select category</option>
 												{#each categories as cat}
 													<option value={cat.name}>{cat.name}</option>
 												{/each}
 											</select>
 										</div>
+
+
+										<div class="flex-auto">
+											<label for="name">Subcategory</label> <br />
+
+											<select name="subcategory" id="subcategory" bind:value={subcategory} required>
+												<option value="">Select subcategory</option>
+												{#each filtered_subcategories as scat}
+													<option value={scat.name}>{scat.name}</option>
+												{/each}
+											</select>
+										</div>
+
 
 										<div class="field flex-auto">
 											<label for="code">Brand</label> <br />
