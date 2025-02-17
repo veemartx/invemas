@@ -5,7 +5,8 @@
 	import MainNav from '$components/main-nav.svelte';
 	import SidePanel from '$components/side-panel.svelte';
 
-	let show_side_panel=false;
+	let show_side_panel=$state();
+
 
 	let { children } = $props();
 </script>

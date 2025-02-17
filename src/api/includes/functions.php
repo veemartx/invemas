@@ -43,3 +43,12 @@
 
         return strtoupper($code_letters.substr(str_shuffle($str),0,3));
     }
+
+
+    function getRecordEntriesNo($con,$query){
+
+        $sql_query=mysqli_query($con,$query);
+
+        return mysqli_num_rows($sql_query);
+
+    }

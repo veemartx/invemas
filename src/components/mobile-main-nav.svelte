@@ -2,18 +2,21 @@
 	import MainNav from './main-nav.svelte';
 	import { page } from '$app/stores';
 	import Logo from './logo.svelte';
+	import { createEventDispatcher } from 'svelte';
 
-	let showMenu = true;
+	const dispatch = createEventDispatcher();
 
+	export let showMenu;
+
+	// when page changes
 	$: {
 		if ($page) {
-			toggleMenu();
+			showMenu = false;
 		}
 	}
 
-	//toggle menu
-	const toggleMenu = () => {
-		showMenu = !showMenu;
+	const hideMenu = () => {
+		dispatch('hide');
 	};
 </script>
 
@@ -21,7 +24,12 @@
 	<div class="trigger text-right">
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<i on:click={toggleMenu} class="ri-menu-line text-2xl font-bold text-white"></i>
+		<i
+			onclick={() => {
+				showMenu = true;
+			}}
+			class="ri-menu-line text-2xl font-bold text-white"
+		></i>
 	</div>
 
 	{#if showMenu}
@@ -35,7 +43,11 @@
 					<div class="close">
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
-						<i on:click={toggleMenu} class="ri-close-circle-line text-lg font-bold text-red-600"
+						<i
+							onclick={() => {
+								showMenu = false;
+							}}
+							class="ri-close-circle-line text-lg font-bold text-red-600"
 						></i>
 					</div>
 				</div>

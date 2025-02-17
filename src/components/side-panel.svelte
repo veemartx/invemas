@@ -8,12 +8,6 @@
 
 	import { page } from '$app/stores';
 
-	$: {
-		if ($page) {
-			dispatch('close');
-		}
-	}
-
 	// send message to close modal
 	const dispatch = createEventDispatcher();
 

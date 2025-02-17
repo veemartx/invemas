@@ -4,13 +4,21 @@
 	import MainProfilePanel from './main-profile-panel.svelte';
 	import MainSearch from './main-search.svelte';
 	import MobileMainNav from './mobile-main-nav.svelte';
+
+	let showMenu = true;
+
 </script>
 
 <div class="wrapper bg-green-900 p-2">
-	<div class="main-bar flex items-center gap-2 justify-between">
+	<div class="main-bar flex items-center justify-between gap-2">
 		<!-- mobile main nav -->
-		<div class="mobile-nav  md:hidden">
-			<MobileMainNav />
+		<div class="mobile-nav md:hidden">
+			<MobileMainNav
+				{showMenu}
+				on:hide={() => {
+					showMenu = false;
+				}}
+			/>
 		</div>
 		<!-- mobile main nav -->
 		<!-- logo  -->
@@ -20,12 +28,12 @@
 		<!-- logo  -->
 
 		<!-- comp search  -->
-		<div class="search hidden md:block">
+		<div class="search mx-5 hidden flex-1 md:block">
 			<MainSearch />
 		</div>
 		<!-- comp search  -->
 
-		<div class="top-panels flex items-center gap-2">
+		<div class="top-panels flex items-center justify-between gap-2">
 			<!-- action panel  -->
 			<div class="action-panel">
 				<MainActionPanel />
@@ -39,6 +47,12 @@
 			<!-- profile panel  -->
 		</div>
 	</div>
+
+	<!-- mobile search -->
+	<div class="mt-2 md:hidden border-t border-slate-50 py-2">
+		<MainSearch />
+	</div>
+	<!-- mobile search -->
 </div>
 
 <style>

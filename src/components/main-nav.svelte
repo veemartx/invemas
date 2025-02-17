@@ -15,6 +15,12 @@
 		</div>
 
 		<div class="nav-col nav-col border-b-2 p-2 hover:bg-slate-50">
+			<a href="/dash/sales" class="flex gap-2 hover:font-bold">
+				<i class="ri-money-pound-circle-line"></i> Sales</a
+			>
+		</div>
+
+		<div class="nav-col nav-col border-b-2 p-2 hover:bg-slate-50">
 			<a href="/dash/reports" class="flex gap-2 hover:font-bold">
 				<i class="ri-pie-chart-line"></i> Reports</a
 			>

@@ -114,11 +114,18 @@ export const logout = () => {
 }
 
 
-export const slugify=(str)=> {
+export const slugify = (str) => {
     str = str.replace(/^\s+|\s+$/g, ''); // trim leading/trailing white space
     str = str.toLowerCase(); // convert string to lowercase
     str = str.replace(/[^a-z0-9 -]/g, '') // remove any non-alphanumeric characters
-             .replace(/\s+/g, '-') // replace spaces with hyphens
-             .replace(/-+/g, '-'); // remove consecutive hyphens
+        .replace(/\s+/g, '-') // replace spaces with hyphens
+        .replace(/-+/g, '-'); // remove consecutive hyphens
     return str;
-  }
+}
+
+
+export const calculate_percentage = (value, total) => {
+    let disc = add_commas((value / total) * 100,2)
+
+    return disc;
+}

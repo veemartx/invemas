@@ -1,5 +1,6 @@
 <script>
 	import DashTopBar from './dash-top-bar.svelte';
+	import LatestTransactions from './latest-transactions.svelte';
 	import OverviewStats from './overview-stats.svelte';
 	import QuickAccess from './quick-access.svelte';
 	import RecentActivity from './recent-activity.svelte';
@@ -30,6 +31,12 @@
 					<QuickAccess />
 				</div>
 				<!-- quick access -->
+
+				<!-- latest transactions  -->
+				<div class="latest-transactions">
+					<LatestTransactions />
+				</div>
+				<!-- latest transactions  -->
 			</div>
 
 			<div class="sidebar">

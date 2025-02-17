@@ -67,7 +67,9 @@ $value=new stdClass();
 
 $value->name="Sales";
 
-$value->value=0;
+$sql="SELECT * FROM sales";
+
+$value->value=getRecordEntriesNo($con,$sql);
 
 $value->icon='<i class="ri-user-smile-line"></i>';
 
