@@ -3,10 +3,19 @@
 	import TitleBar from '$components/title-bar.svelte';
 	import { API_BASE_URL } from '$lib/config/base-urls';
 	import { fetch_resource } from '$lib/methods/functions';
-	import { add_commas, current_liu } from '$lib/methods/methods';
+	import {
+		add_commas,
+		current_liu,
+		get_current_page,
+		make_pages,
+		update_page
+	} from '$lib/methods/methods';
 	import { onMount } from 'svelte';
 	import pkg from 'notiflix';
 	import axios from 'axios';
+	import Datatable from '$components/datatable.svelte';
+	import Pagination from '$utilities/pagination/pagination.svelte';
+	import { page } from '$app/stores';
 
 	const { Notify, Confirm } = pkg;
 
@@ -16,7 +25,56 @@
 
 	const liu = current_liu();
 
-	let list;
+	let list = [];
+
+	let current_page = 1;
+
+	let page_size = 50;
+
+	let page_items = [];
+
+	let pages = [];
+
+	let headers = [
+		{ name: 'No', value: 'no' },
+		{ name: 'Name', value: 'name' },
+		{ name: 'Code', value: 'code' },
+		{ name: 'Category', value: 'category' },
+		{ name: 'Subcategory', value: 'subcategory' },
+		{ name: 'Cost Price', value: 'cost_price' },
+		{ name: 'Retail Price', value: 'retail_price' },
+		{ name: 'Discount', value: 'discount' },
+		{ name: 'Actions', value: '' }
+	];
+
+	$: {
+		if ($page) {
+			current_page = get_current_page($page.url.search);
+
+			page_items = update_page(list, current_page,page_size);
+			// console.log();
+		}
+	}
+
+	const make_rows = (list) => {
+		list.forEach((v, i) => {
+			rows.push([
+				i + 1,
+				v.name,
+				v.code,
+				v.category,
+				v.subcategory,
+				v.cost_price,
+				v.retail_price,
+				v.discount,
+				''
+			]);
+		});
+
+		rows = rows;
+
+		// console.log(rows);
+	};
 
 	const delete_list_product = async (pl) => {
 		console.log(pl);
@@ -55,11 +113,15 @@
 		const res = await fetch_resource(resource, url);
 
 		list = res.data;
+
+		page_items=update_page(list,current_page,page_size);
 	};
 
 	onMount(async () => {
 		//get ist
 		await get_list();
+
+		pages = make_pages(list.length, page_size);
 	});
 </script>
 
@@ -97,7 +159,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each list as lp, i}
+						{#each page_items as lp, i}
 							<tr class="text-sm text-slate-700">
 								<td>{i + 1}</td>
 								<td>{lp.name}</td>
@@ -109,7 +171,7 @@
 								<td>
 									<!-- svelte-ignore a11y_consider_explicit_label -->
 									<button
-										on:click={() => {
+										onclick={() => {
 											Confirm.show(
 												'Delete',
 												`Delete List Item ${lp.name}?`,
@@ -143,6 +205,10 @@
 						{/each}
 					</tbody>
 				</table>
+
+				<div class="">
+					<Pagination {current_page} {pages} {page_size} items={list.length}></Pagination>
+				</div>
 			</div>
 		</Segment>
 	</div>

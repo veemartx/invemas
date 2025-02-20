@@ -29,6 +29,8 @@ while ($p=mysqli_fetch_assoc($query)){
 
     $pl->category=$p['category'];
 
+    $pl->subcategory=$p['subcategory'];
+
     $pl->cost_price=$p['cost_price'];
 
     $pl->retail_price=$p['retail_price'];

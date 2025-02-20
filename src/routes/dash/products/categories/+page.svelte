@@ -8,7 +8,9 @@
 	import { v4 } from 'uuid';
 	import axios from 'axios';
 	import pkg from 'notiflix';
-	import { current_liu, slugify } from '$lib/methods/methods';
+	import { current_liu, get_current_page, make_pages, slugify, update_page } from '$lib/methods/methods';
+	import { page } from '$app/stores';
+	import Pagination from '$utilities/pagination/pagination.svelte';
 
 	const { Notify, Confirm } = pkg;
 
@@ -24,7 +26,7 @@
 
 	let subcategory_action_loading = false;
 
-	let categories;
+	let categories=[];
 
 	let show_modal = false;
 
@@ -45,6 +47,22 @@
 	let subcategory_modal = false;
 
 	let subcategory;
+
+	let current_page = 1;
+
+	let page_size = 50;
+
+	let page_items = [];
+
+	let pages = [];
+
+	$: {
+		if ($page) {
+			current_page = get_current_page($page.url.search);
+
+			page_items = update_page(categories, current_page, page_size);
+		}
+	}
 
 	// send the data, if id exists update if not create
 	const category_form_submit = async () => {
@@ -157,6 +175,8 @@
 				await get_categories();
 
 				selected_category = categories[selected_category_index];
+
+				page_items = update_page(categories, current_page, page_size);
 			} else {
 				Notify.failure(res.message);
 			}
@@ -167,6 +187,8 @@
 
 	onMount(async () => {
 		await get_categories();
+
+		pages = make_pages(categories.length, page_size);
 
 		// console.log(categories);
 	});
@@ -201,7 +223,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each categories as cat, i}
+						{#each page_items as cat, i}
 							<tr class="text-sm text-slate-700">
 								<td>{i + 1}</td>
 								<td>{cat.name}</td>
@@ -260,6 +282,11 @@
 						{/each}
 					</tbody>
 				</table>
+
+				<div class="">
+					<Pagination {current_page} {pages} {page_size} items={categories.length}></Pagination>
+				</div>
+
 			</div>
 		</Segment>
 	</div>

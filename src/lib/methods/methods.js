@@ -125,7 +125,39 @@ export const slugify = (str) => {
 
 
 export const calculate_percentage = (value, total) => {
-    let disc = add_commas((value / total) * 100,2)
+    let disc = add_commas((value / total) * 100, 2)
 
     return disc;
+}
+
+
+export const create_pages = (size) => {
+    return [...Array(size).keys()];
+}
+
+export const get_current_page = (url) => {
+
+    let url_arr = url.split('=');
+
+    if (url_arr[1]) {
+        return url_arr[1];
+    } else {
+        return 1;
+    }
+}
+
+
+export const make_pages=(items,page_size)=>{
+
+    let total_pages=Math.ceil(items / page_size);
+
+     return [...Array(total_pages).keys()];
+}
+
+
+export const update_page=(items,page,page_size)=>{
+
+    let offset=(page-1)*page_size;
+
+    return items.slice(offset,offset+page_size);
 }

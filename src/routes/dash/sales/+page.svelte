@@ -4,16 +4,37 @@
 	import TitleBar from '$components/title-bar.svelte';
 	import { API_BASE_URL } from '$lib/config/base-urls';
 	import { fetch_resource } from '$lib/methods/functions';
-	import { add_commas, calculate_percentage, format_date } from '$lib/methods/methods';
+	import { add_commas, calculate_percentage, format_date, get_current_page, make_pages, update_page } from '$lib/methods/methods';
+	import Pagination from '$utilities/pagination/pagination.svelte';
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+
 
 	const url = `${API_BASE_URL}sales/get.php`;
 
 	const resource = 'Sales';
 
-	let sales = $state([]);
+	let sales = [];
 
-	let filtered_sales = $state([]);
+	let filtered_sales = [];
+
+
+	let current_page = 1;
+
+	let page_size = 50;
+
+	let page_items = [];
+
+	let pages = [];
+
+	$: {
+		if ($page) {
+			current_page = get_current_page($page.url.search);
+
+			page_items = update_page(filtered_sales, current_page, page_size);
+		}
+	}
+
 
 	const filter_sales = (q) => {
 		if (q) {
@@ -43,6 +64,8 @@
 	onMount(async () => {
 		//get sales
 		await get_sales();
+		pages = make_pages(filtered_sales.length, page_size);
+
 	});
 </script>
 
@@ -100,7 +123,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each filtered_sales as sale, i}
+						{#each page_items as sale, i}
 							<tr class="text-sm">
 								<td>{i + 1}</td>
 								<td>{sale.name}</td>
@@ -121,6 +144,11 @@
 						{/each}
 					</tbody>
 				</table>
+
+
+				<div class="">
+					<Pagination {current_page} {pages} {page_size} items={filtered_sales.length}></Pagination>
+				</div>
 			</div>
 		</Segment>
 	</div>

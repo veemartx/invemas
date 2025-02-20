@@ -49,22 +49,22 @@
 		{
 			name: 'SAP',
 			icon: SapIcon,
-			url: '/dash/apps/sap'
+			url: '/dash/apps'
 		},
 		{
 			name: 'Uber',
 			icon: UberEats,
-			url: '/dash/apps/uber'
+			url: '/dash/apps'
 		},
 		{
 			name: 'Glovo',
 			icon: GlovoIcon,
-			url: '/dash/apps/glovo'
+			url: '/dash/apps'
 		},
 		{
 			name: 'Ziada',
 			icon: ZiadaIcon,
-			url: '/dash/apps/ziada'
+			url: '/dash/apps'
 		}
 	];
 </script>

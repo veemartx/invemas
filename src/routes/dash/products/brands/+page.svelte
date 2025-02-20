@@ -8,6 +8,10 @@
 	import { v4 } from 'uuid';
 	import pkg from 'notiflix';
 	import axios from 'axios';
+	import { page } from '$app/stores';
+	import Pagination from '$utilities/pagination/pagination.svelte';
+	import { get_current_page, make_pages, update_page } from '$lib/methods/methods';
+
 
 	const { Notify, Confirm } = pkg;
 
@@ -17,7 +21,7 @@
 
 	let show_modal = false;
 
-	let brands;
+	let brands=[];
 
 	let brand_name;
 
@@ -26,6 +30,24 @@
 	let brand_action = 'create';
 
 	let brand_action_loading = false;
+
+
+	let current_page = 1;
+
+	let page_size = 50;
+
+	let page_items = [];
+
+	let pages = [];
+
+	$: {
+		if ($page) {
+			current_page = get_current_page($page.url.search);
+
+			page_items = update_page(brands, current_page, page_size);
+		}
+	}
+
 
 	// send the data, if id exists update if not create
 	const brand_form_submit = async () => {
@@ -101,12 +123,17 @@
 		const res = await fetch_resource(resource, url);
 
 		brands = res.data;
+
+		page_items = update_page(brands, current_page, page_size);
+
 	};
 
 	onMount(async () => {
 		await get_brands();
 
 		// console.log(brands);
+		pages = make_pages(brands.length, page_size);
+
 	});
 </script>
 
@@ -143,7 +170,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each brands as brand, i}
+						{#each page_items as brand, i}
 							<tr class="text-sm text-slate-700">
 								<td>{i + 1}</td>
 								<td>{brand.name}</td>
@@ -180,6 +207,11 @@
 						{/each}
 					</tbody>
 				</table>
+
+
+				<div class="">
+					<Pagination {current_page} {pages} {page_size} items={brands.length}></Pagination>
+				</div>
 			</div>
 		</Segment>
 	</div>

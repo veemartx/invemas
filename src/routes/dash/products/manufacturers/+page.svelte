@@ -8,6 +8,9 @@
 	import { v4 } from 'uuid';
 	import pkg from 'notiflix';
 	import axios from 'axios';
+	import { page } from '$app/stores';
+	import Pagination from '$utilities/pagination/pagination.svelte';
+	import { get_current_page, make_pages, update_page } from '$lib/methods/methods';
 
 	const { Notify, Confirm } = pkg;
 
@@ -17,7 +20,7 @@
 
 	let show_modal = false;
 
-	let manufacturers;
+	let manufacturers = [];
 
 	let manufacturer;
 
@@ -26,6 +29,22 @@
 	let manufacturer_action = 'create';
 
 	let manufacturer_action_loading = false;
+
+	let current_page = 1;
+
+	let page_size = 50;
+
+	let page_items = [];
+
+	let pages = [];
+
+	$: {
+		if ($page) {
+			current_page = get_current_page($page.url.search);
+
+			page_items = update_page(manufacturers, current_page, page_size);
+		}
+	}
 
 	// send the data, if id exists update if not create
 	const manufacturer_form_submit = async () => {
@@ -107,6 +126,7 @@
 		await get_manufacturers();
 
 		// console.log(manufacturers);
+		pages = make_pages(manufacturers.length, page_size);
 	});
 </script>
 
@@ -143,7 +163,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each manufacturers as man, i}
+						{#each page_items as man, i}
 							<tr class="text-sm text-slate-700">
 								<td>{i + 1}</td>
 								<td>{man.name}</td>
@@ -151,9 +171,15 @@
 									<!-- svelte-ignore a11y_consider_explicit_label -->
 									<button
 										on:click={() => {
-											Confirm.show('Delete', `Delete Manufacturer ${man.name}?`, 'Yes', 'Cancel', () => {
-												delete_manufacturer(man);
-											});
+											Confirm.show(
+												'Delete',
+												`Delete Manufacturer ${man.name}?`,
+												'Yes',
+												'Cancel',
+												() => {
+													delete_manufacturer(man);
+												}
+											);
 										}}
 										class="ui mini red basic icon button"
 									>
@@ -179,6 +205,10 @@
 						{/each}
 					</tbody>
 				</table>
+
+				<div class="">
+					<Pagination {current_page} {pages} {page_size} items={manufacturers.length}></Pagination>
+				</div>
 			</div>
 		</Segment>
 	</div>

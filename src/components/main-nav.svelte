@@ -33,7 +33,7 @@
 		</div>
 
 		<div class="nav-col nav-col border-b-2 p-2 hover:bg-slate-50">
-			<a href="/dash/users" class="flex gap-2 hover:font-bold"
+			<a href="/dash/settings" class="flex gap-2 hover:font-bold"
 				><i class="ri-settings-line"></i> Settings</a
 			>
 		</div>

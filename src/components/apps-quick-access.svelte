@@ -16,7 +16,7 @@
 			</div>
 			<div class="appDrawer py-4 p-2 flex justify-between gap-4 flex-wrap">
 				<div class="appPanel bg-slate-100 dark:bg-slate-600 dark:hover:bg-slate-700 hover:bg-slate-100 border border-invm_border rounded w-20 h-20 m-2 my-4">
-					<a href="/apps/sap" class="bg-green-500">
+					<a href="/apps/" class="bg-green-500">
 						<div class="appIcon flex items-center h-full justify-center p-2">
 							<img src={SapIcon} alt="connect icon" />
 						</div>
@@ -25,7 +25,7 @@
 				</div>
 
 				<div class="appPanel bg-slate-100 dark:bg-slate-600 dark:hover:bg-slate-700 hover:bg-slate-100 border border-invm_border rounded w-20 h-20 m-2 my-4">
-					<a href="/apps/uber-eats">
+					<a href="/apps/">
 						<div class="appIcon flex items-center h-full justify-center p-2">
 							<img src={UberEats} alt="uber icon" />
 						</div>
@@ -43,7 +43,7 @@
 				</div>
 
 				<div class="appPanel bg-slate-100 dark:bg-slate-600 dark:hover:bg-slate-700 hover:bg-slate-100 border border-invm_border rounded w-20 h-20 m-2 my-4">
-					<a href="/apps/glovo">
+					<a href="/apps">
 						<div class="appIcon flex items-center h-full justify-center p-2">
 							<img src={GlovoIcon} alt="glovo icon" />
 						</div>
@@ -52,7 +52,7 @@
 				</div>
 
                 <div class="appPanel bg-slate-100 dark:bg-slate-600 dark:hover:bg-slate-700 hover:bg-slate-100 border border-invm_border rounded w-20 h-20 m-2 my-4">
-					<a href="/apps/ziada">
+					<a href="/apps">
 						<div class="appIcon flex items-center h-full justify-center p-2">
 							<img src={ZiadaIcon} alt="ziada icon" />
 						</div>

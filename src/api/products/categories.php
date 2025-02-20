@@ -11,7 +11,7 @@ $res=new stdClass();
 
 $categories=[];
 
-$sql="SELECT * FROM categories WHERE deleted_at IS NULL";
+$sql="SELECT * FROM categories WHERE deleted_at IS NULL ORDER BY name ASC";
 
 $query=mysqli_query($con,$sql);
 

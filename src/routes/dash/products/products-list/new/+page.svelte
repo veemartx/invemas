@@ -157,7 +157,7 @@
 
 				Notify.success(res.message);
 
-				reset_form(create_form_id);
+				// reset_form(create_form_id);
 			} else {
 				Notify.failure(res.message);
 			}

@@ -9,12 +9,12 @@
 
 	let password;
 
-	let loading=false;
+	let loading = false;
 
 	const login = async () => {
 		let fd = { username: username, password: password };
 
-		loading=true;
+		loading = true;
 
 		try {
 			let response = await axios({
@@ -30,7 +30,7 @@
 
 			// console.log(res);
 
-			loading=false;
+			loading = false;
 
 			if (res.login) {
 				Notify.success('Login successful.Redirecting');
@@ -43,8 +43,6 @@
 			} else {
 				Notify.failure('Invalid Credentials. Try Again');
 			}
-
-
 		} catch (err) {
 			console.log(err);
 		}
@@ -58,9 +56,15 @@
 		</div>
 		<div class="title border-b-2 bg-gray-100 p-2 font-bold shadow-sm">Admin Login</div>
 
-		<div class="">
-			<form class="form" on:submit|preventDefault={login}>
-				<div class="my-2 p-2">
+		<div class="mt-2">
+			<form
+				class="ui form"
+				onsubmit={(e) => {
+					e.preventDefault();
+					login();
+				}}
+			>
+				<div class="field my-2 p-2">
 					<input
 						type="text"
 						name="username"
@@ -71,7 +75,7 @@
 					/>
 				</div>
 
-				<div class="my-2 p-2">
+				<div class="field my-2 p-2">
 					<input
 						type="password"
 						placeholder="password"
@@ -83,7 +87,12 @@
 				</div>
 
 				<div class="my-2 p-2">
-					<button class="ui green  mini icon button p-1 px-2 font-bold text-slate-50 shadow-sm {loading?'loading':''}" type="submit">
+					<button
+						class="ui green mini icon button p-1 px-2 font-bold text-slate-50 shadow-sm {loading
+							? 'loading'
+							: ''}"
+						type="submit"
+					>
 						<i class="ri-lock-line"></i> Login
 					</button>
 				</div>
@@ -97,6 +106,10 @@
 <style>
 	.wrapper {
 		height: 100vh;
+	}
+
+	input {
+		border-radius: 3px;
 	}
 
 	.login-panel {

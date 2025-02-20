@@ -36,14 +36,7 @@
 					</div>
 
 					<div class="add_product p-1 hidden md:block">
-						<a href="products/new">
-							<!-- <Button color="red"  variant="fill-outline" size="sm"  >
-								<i class="ri-add-circle-line text-md"></i> <span class="py-1">Add Product</span>
-							</Button> -->
-                            <button>
-                                Add Product
-                            </button>
-						</a>
+						
 					</div>
 				</div>
 			</div>

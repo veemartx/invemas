@@ -1,11 +1,13 @@
 <script>
+	import { page } from '$app/stores';
 	import Segment from '$components/segment.svelte';
 	import StatsCard from '$components/stats-card.svelte';
 	import StatsCol from '$components/stats-col.svelte';
 	import TitleBar from '$components/title-bar.svelte';
 	import { API_BASE_URL } from '$lib/config/base-urls';
 	import { fetch_resource } from '$lib/methods/functions';
-	import { add_commas, format_date } from '$lib/methods/methods';
+	import { add_commas, format_date, get_current_page, make_pages, update_page } from '$lib/methods/methods';
+	import Pagination from '$utilities/pagination/pagination.svelte';
 	import { onMount } from 'svelte';
 	import { v4 } from 'uuid';
 
@@ -19,9 +21,21 @@
 
 	let product_stats = [];
 
-	const genUid = () => {
-		console.log(v4());
-	};
+	let current_page = 1;
+
+	let page_size = 50;
+
+	let page_items = [];
+
+	let pages = [];
+
+	$: {
+		if ($page) {
+			current_page = get_current_page($page.url.search);
+
+			page_items = update_page(products, current_page, page_size);
+		}
+	}
 
 	onMount(async () => {
 		const stats_res = await fetch_resource(resource, `${stats_base_url}`);
@@ -33,6 +47,8 @@
 		products = products_res.data;
 
 		// console.log(product_stats);
+
+		pages = make_pages(products.length, page_size);
 	});
 </script>
 
@@ -96,7 +112,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each products as prd, i}
+						{#each page_items as prd, i}
 							<tr class="text-sm text-slate-700">
 								<td>{i + 1}</td>
 								<td>{prd.name}</td>
@@ -128,11 +144,12 @@
 						{/each}
 					</tbody>
 				</table>
-			</div>
-		</Segment>
-	</div>
 
-	<div class="my-3">
-		<button on:click={genUid} class="ui basic purple mini button"> Gen-Uid </button>
+				<div class="">
+					<Pagination {current_page} {pages} {page_size} items={products.length}></Pagination>
+				</div>
+			</div>
+
+		</Segment>
 	</div>
 </div>
