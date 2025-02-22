@@ -21,7 +21,7 @@
 
         $str="qwertyuiopasdfghjklzxcvbnnm";
 
-        return str_replace(' ','-',$name).'-'.substr(str_shuffle($str),0,5);
+        return str_replace(' ','-',strtolower($name)).'-'.substr(str_shuffle($str),0,5);
     }
 
     function generateProductCode($name){
@@ -51,4 +51,9 @@
 
         return mysqli_num_rows($sql_query);
 
+    }
+
+
+    function capitalize($str){
+        return strtoupper(substr($str,0,1)).strtolower(substr($str,1));
     }

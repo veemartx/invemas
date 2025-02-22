@@ -37,6 +37,10 @@ while ($p=mysqli_fetch_assoc($query)){
 
     $pl->discount=$p['discount'];
 
+    $pl->brand=$p['brand'];
+
+    $pl->manufacturer=$p['manufacturer'];
+
     $pl->image_url=$p['images_url'];
 
     $pl->slug=$p['slug'];
