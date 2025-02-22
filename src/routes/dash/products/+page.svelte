@@ -5,8 +5,16 @@
 	import StatsCol from '$components/stats-col.svelte';
 	import TitleBar from '$components/title-bar.svelte';
 	import { API_BASE_URL } from '$lib/config/base-urls';
+	import { COMPANY } from '$lib/config/consts';
 	import { fetch_resource } from '$lib/methods/functions';
-	import { add_commas, format_date, get_current_page, make_pages, update_page } from '$lib/methods/methods';
+	import {
+		add_commas,
+		format_date,
+		get_current_page,
+		make_pages,
+		update_page
+	} from '$lib/methods/methods';
+	import { generate_pdf } from '$lib/methods/pdf-make';
 	import Pagination from '$utilities/pagination/pagination.svelte';
 	import { onMount } from 'svelte';
 	import { v4 } from 'uuid';
@@ -16,6 +24,79 @@
 	const stats_base_url = `${API_BASE_URL}products/stats.php`;
 
 	const resource = 'products';
+
+	const pdf_column_titles = [
+		{ text: 'No', bold: true, fontSize: 9 },
+		{ text: 'Name', bold: true, fontSize: 9 },
+		{ text: 'Code', bold: true, fontSize: 9 },
+		{ text: 'Category (Subcategory)', bold: true, fontSize: 9 },
+		{ text: 'Cost', bold: true, fontSize: 9 },
+		{ text: 'Retail', bold: true, fontSize: 9 },
+		{ text: 'Qty', bold: true, fontSize: 9 },
+		{ text: 'Value', bold: true, fontSize: 9 },
+		{ text: 'Created', bold: true, fontSize: 9 }
+	];
+
+	const pdf_column_widths = ['6%', '20%', '9%', '25%', '8%', '8%', '7%', '9%', '10%'];
+
+	const pdf_make_rows = (products) => {
+		let rows = [];
+		products.forEach((p, i) => {
+			rows.push([
+				{
+					text: i + 1,
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+
+				{
+					text: p.name,
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+
+				{
+					text: p.code,
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+
+				{
+					text: `${p.category} (${p.subcategory})`,
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+
+				{
+					text: add_commas(parseFloat(p.cost_price)),
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+				{
+					text: add_commas(parseFloat(p.retail_price)),
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+				{
+					text: p.qty,
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+				{
+					text: add_commas(parseFloat(p.qty * p.cost_price)),
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+				{
+					text: format_date(p.created_at, 'YYYY-MM-DD'),
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				}
+			]);
+		});
+
+		return rows;
+	};
 
 	let products = [];
 
@@ -37,6 +118,24 @@
 		}
 	}
 
+	const export_pdf = (data) => {
+		//make rows
+		let rows = pdf_make_rows(data);
+
+		let doc_number = 'STK001';
+
+		let title = 'Products';
+
+		let filters = [
+			{
+				name: 'Stock Products',
+				value: ''
+			}
+		];
+
+        generate_pdf(title,doc_number,filters,pdf_column_titles,pdf_column_widths,rows,COMPANY);
+
+	};
 	onMount(async () => {
 		const stats_res = await fetch_resource(resource, `${stats_base_url}`);
 
@@ -91,7 +190,9 @@
 				</button>
 
 				<!-- svelte-ignore a11y_consider_explicit_label -->
-				<button class="ui basic red button icon mini p-2">
+				<button onclick={()=>{
+					export_pdf(products);
+				}} class="ui basic red button icon mini p-2">
 					<i class="pdf file icon"></i>
 				</button>
 			</div>
@@ -149,7 +250,13 @@
 					<Pagination {current_page} {pages} {page_size} items={products.length}></Pagination>
 				</div>
 			</div>
-
 		</Segment>
 	</div>
 </div>
+
+<style>
+	button {
+		font-size: x-small !important;
+		font-weight: 900 !important;
+	}
+</style>

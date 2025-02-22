@@ -16,6 +16,8 @@
 	import Datatable from '$components/datatable.svelte';
 	import Pagination from '$utilities/pagination/pagination.svelte';
 	import { page } from '$app/stores';
+	import { COMPANY } from '$lib/config/consts';
+	import { generate_pdf } from '$lib/methods/pdf-make';
 
 	const { Notify, Confirm } = pkg;
 
@@ -24,6 +26,75 @@
 	const resource = 'list';
 
 	const liu = current_liu();
+
+	const pdf_column_titles = [
+		{ text: 'No', bold: true, fontSize: 9 },
+		{ text: 'Name', bold: true, fontSize: 9 },
+		{ text: 'Code', bold: true, fontSize: 9 },
+		{ text: 'Category (Subcategory)', bold: true, fontSize: 9 },
+		{ text: 'Cost', bold: true, fontSize: 9 },
+		{ text: 'Retail', bold: true, fontSize: 9 },
+		{ text: 'Brand', bold: true, fontSize: 9 },
+		{ text: 'Manufacturer', bold: true, fontSize: 8 }
+	];
+
+	const pdf_column_widths = ['6%', '20%', '9%', '27%','8%', '8%', '10%', '11%'];
+
+	const pdf_make_rows = (products) => {
+		let rows = [];
+		products.forEach((p, i) => {
+			rows.push([
+				{
+					text: i + 1,
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+
+				{
+					text: p.name,
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+
+				{
+					text: p.code,
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+
+				{
+					text: `${p.category} (${p.subcategory})`,
+					style: {
+						fontSize:8
+					},
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+
+				{
+					text: add_commas(parseFloat(p.cost_price)),
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+				{
+					text: add_commas(parseFloat(p.retail_price)),
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+				{
+					text: p.brand,
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				},
+				{
+					text: p.manufacturer,
+					style: 'reportValue',
+					fillColor: i % 2 == 0 ? '#f7f0f0' : '#f7f7f7'
+				}
+			]);
+		});
+
+		return rows;
+	};
 
 	let list = [];
 
@@ -51,30 +122,10 @@
 		if ($page) {
 			current_page = get_current_page($page.url.search);
 
-			page_items = update_page(list, current_page,page_size);
+			page_items = update_page(list, current_page, page_size);
 			// console.log();
 		}
 	}
-
-	const make_rows = (list) => {
-		list.forEach((v, i) => {
-			rows.push([
-				i + 1,
-				v.name,
-				v.code,
-				v.category,
-				v.subcategory,
-				v.cost_price,
-				v.retail_price,
-				v.discount,
-				''
-			]);
-		});
-
-		rows = rows;
-
-		// console.log(rows);
-	};
 
 	const delete_list_product = async (pl) => {
 		console.log(pl);
@@ -114,8 +165,27 @@
 
 		list = res.data;
 
-		page_items=update_page(list,current_page,page_size);
+		page_items = update_page(list, current_page, page_size);
 	};
+
+	const export_pdf=(data)=>{
+
+		let title="Products List";
+
+		let rows=pdf_make_rows(data);
+
+		let doc_number="PL001";
+
+		let filters=[
+			{
+				name:"Products List",
+				value:"All"
+			}
+		]
+
+        generate_pdf(title,doc_number,filters,pdf_column_titles,pdf_column_widths,rows,COMPANY);
+
+	}
 
 	onMount(async () => {
 		//get ist
@@ -135,13 +205,30 @@
 	<div class="my-3">
 		<Segment>
 			<div slot="title">Products List</div>
-			<div slot="actions" class="">
+			<div slot="actions" class="p-2">
 				<!-- svelte-ignore a11y_consider_explicit_label -->
 				<a href="products-list/new">
 					<button class="ui basic teal button icon mini p-2">
 						<i class="plus icon"></i> New
 					</button>
 				</a>
+
+				<!-- svelte-ignore a11y_consider_explicit_label -->
+				<button onclick={()=>{
+					export_pdf(list);
+				}} class="ui basic mini icon red button hover:bg-slate-200">
+					<i class="pdf file icon"></i>
+				</button>
+
+				<!-- svelte-ignore a11y_consider_explicit_label -->
+				<button class="ui basic mini icon green button">
+					<i class="excel file icon"></i>
+				</button>
+
+				<!-- svelte-ignore a11y_consider_explicit_label -->
+				<button class="ui basic mini icon purple button">
+					<i class="print file icon"></i>
+				</button>
 			</div>
 
 			<div slot="content" class="overflow-x-auto">
@@ -215,4 +302,8 @@
 </div>
 
 <style>
+	button {
+		font-size: x-small !important;
+		font-weight: 900 !important;
+	}
 </style>
